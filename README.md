@@ -49,7 +49,7 @@ dagger run fluentci .
 | TF_REGISTRY_CLIENT_TIMEOUT  | The registry client timeout                        |
 | TF_CLI_CONFIG_FILE          | The Terraform CLI config file                      |
 | TF_PLUGIN_CACHE_DIR         | The Terraform plugin cache directory               |
-| TF_IGNORE                   | Display ignored files and diretories               |
+| TF_IGNORE                   | Display ignored files and directories               |
 
 ## Jobs
 
