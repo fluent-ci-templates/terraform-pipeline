@@ -30,25 +30,26 @@ dagger run fluentci .
 
 ## Environment variables
 
-| Variable                    | Description                             |
-| --------------------------- | --------------------------------------- |
-| TF_CLOUD_ORGANIZATION       | The Terraform Cloud organization to use |
-| TF_API_TOKEN                | The Terraform Cloud API token           |
-| TF_WORKSPACE                | The Terraform Cloud workspace to use    |
-| TF_LOG                      | The Terraform log level                 |
-| TF_LOG_PATH                 | The Terraform log path                  |
-| TF_INPUT                    | Whether to ask for input                |
-| TF_VAR_*                    | Terraform variables                     |
-| TF_CLI_ARGS                 | Additional Terraform CLI arguments      |
-| TF_CLI_ARGS_*               | Additional Terraform CLI arguments      |
-| TF_DATA_DIR                 | The Terraform data directory            |
-| TF_WORKSPACE                | The Terraform workspace                 |
-| TF_IN_AUTOMATION            | Whether Terraform is running in CI      |
-| TF_REGISTRY_DISCOVERY_RETRY | Whether to enable registry discovery    |
-| TF_REGISTRY_CLIENT_TIMEOUT  | The registry client timeout             |
-| TF_CLI_CONFIG_FILE          | The Terraform CLI config file           |
-| TF_PLUGIN_CACHE_DIR         | The Terraform plugin cache directory    |
-| TF_IGNORE                   | Display ignored files and diretories    |
+| Variable                    | Description                                        |
+| --------------------------- | -------------------------------------------------- |
+| TF_VERSION                  | The Terraform version to use. Defaults to `latest` |
+| TF_CLOUD_ORGANIZATION       | The Terraform Cloud organization to use            |
+| TF_API_TOKEN                | The Terraform Cloud API token                      |
+| TF_WORKSPACE                | The Terraform Cloud workspace to use               |
+| TF_LOG                      | The Terraform log level                            |
+| TF_LOG_PATH                 | The Terraform log path                             |
+| TF_INPUT                    | Whether to ask for input                           |
+| TF_VAR_*                    | Terraform variables                                |
+| TF_CLI_ARGS                 | Additional Terraform CLI arguments                 |
+| TF_CLI_ARGS_*               | Additional Terraform CLI arguments                 |
+| TF_DATA_DIR                 | The Terraform data directory                       |
+| TF_WORKSPACE                | The Terraform workspace                            |
+| TF_IN_AUTOMATION            | Whether Terraform is running in CI                 |
+| TF_REGISTRY_DISCOVERY_RETRY | Whether to enable registry discovery               |
+| TF_REGISTRY_CLIENT_TIMEOUT  | The registry client timeout                        |
+| TF_CLI_CONFIG_FILE          | The Terraform CLI config file                      |
+| TF_PLUGIN_CACHE_DIR         | The Terraform plugin cache directory               |
+| TF_IGNORE                   | Display ignored files and diretories               |
 
 ## Jobs
 
