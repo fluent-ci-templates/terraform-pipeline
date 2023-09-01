@@ -112,6 +112,14 @@ export const apply = async (client: Client, src = ".") => {
   const result = await ctr.stdout();
 
   console.log(result);
+
+  await client
+    .pipeline("clear_plan")
+    .container()
+    .from("alpine")
+    .withMountedCache("/app/plan", client.cacheVolume("tfplan"))
+    .withExec(["sh", "-c", "rm -rf /app/plan/*"])
+    .stdout();
 };
 
 export type JobExec = (
