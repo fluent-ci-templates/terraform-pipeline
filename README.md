@@ -11,7 +11,7 @@ A ready-to-use CI/CD Pipeline for managing your infrastructure with [Terraform](
 Run the following command in your project:
 
 ```bash
-dagger run fluentci terraform_pipeline
+fluentci run terraform_pipeline
 ```
 
 Or, if you want to use it as a template:
