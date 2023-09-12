@@ -1,4 +1,4 @@
-import { Container } from "@dagger.io/dagger";
+import { Container } from "@fluentci.io/dagger";
 
 export function filterObjectByPrefix<T>(
   obj: Record<string, T>,
