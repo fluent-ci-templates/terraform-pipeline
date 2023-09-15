@@ -10,7 +10,11 @@ export enum Job {
 
 export const exclude = [".terraform", ".git", ".fluentci", "plan"];
 
-const envs = filterObjectByPrefix(Deno.env.toObject(), ["TF_", "AWS_"]);
+const envs = filterObjectByPrefix(Deno.env.toObject(), [
+  "TF_",
+  "AWS_",
+  "GOOGLE_",
+]);
 
 export const init = async (client: Client, src = ".") => {
   const context = client.host().directory(src);
