@@ -65,10 +65,8 @@ dagger run fluentci .
 You can also use this pipeline programmatically:
 
 ```ts
-import Client, { connect } from "https://sdk.fluentci.io/v0.1.4/mod.ts";
-import { Dagger } from "https://pkg.fluentci.io/terraform_pipeline/mod.ts";
-
-const { init, validate, plan, apply } = Dagger;
+import Client, { connect } from "https://sdk.fluentci.io/v0.1.7/mod.ts";
+import { init, validate, plan, apply } from "https://pkg.fluentci.io/terraform_pipeline@v0.3.0/mod.ts";
 
 function pipeline(src = ".") {
   connect(async (client: Client) => {

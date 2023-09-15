@@ -8,7 +8,7 @@ export enum Job {
   apply = "apply",
 }
 
-const exclude = [".terraform", ".git", ".fluentci", "plan"];
+export const exclude = [".terraform", ".git", ".fluentci", "plan"];
 
 const envs = filterObjectByPrefix(Deno.env.toObject(), ["TF_", "AWS_"]);
 
