@@ -11,7 +11,7 @@ function pipeline(src = ".") {
     await init(client, src);
     await validate(client, src);
     await plan(client, src);
-    // await apply(client, src);
+    await apply(client, src);
   });
 }
 
