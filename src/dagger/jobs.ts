@@ -1,4 +1,4 @@
-import Client from "../../deps.ts";
+import { client } from "./dagger.ts";
 import { filterObjectByPrefix, withEnvs } from "./lib.ts";
 
 export enum Job {
@@ -16,9 +16,18 @@ const envs = filterObjectByPrefix(Deno.env.toObject(), [
   "GOOGLE_",
 ]);
 
-export const init = async (client: Client, src = ".") => {
+export const init = async (
+  src = ".",
+  googleApplicationCredentials?: string
+) => {
   const context = client.host().directory(src);
   const TF_VERSION = Deno.env.get("TF_VERSION") || "latest";
+  if (googleApplicationCredentials) {
+    Deno.env.set(
+      "GOOGLE_APPLICATION_CREDENTIALS",
+      googleApplicationCredentials
+    );
+  }
 
   const baseCtr = withEnvs(
     client
@@ -37,10 +46,10 @@ export const init = async (client: Client, src = ".") => {
 
   const result = await ctr.stdout();
 
-  console.log(result);
+  return result;
 };
 
-export const validate = async (client: Client, src = ".") => {
+export const validate = async (src = ".") => {
   const context = client.host().directory(src);
   const TF_VERSION = Deno.env.get("TF_VERSION") || "latest";
 
@@ -63,12 +72,19 @@ export const validate = async (client: Client, src = ".") => {
 
   const result = await ctr.stdout();
 
-  console.log(result);
+  return result;
 };
 
-export const plan = async (client: Client, src = ".") => {
+export const plan = async (
+  src = ".",
+  googleApplicationCredentials?: string
+) => {
   const context = client.host().directory(src);
   const TF_VERSION = Deno.env.get("TF_VERSION") || "latest";
+
+  if (googleApplicationCredentials) {
+    envs.GOOGLE_APPLICATION_CREDENTIALS = googleApplicationCredentials;
+  }
 
   const baseCtr = withEnvs(
     client
@@ -90,12 +106,19 @@ export const plan = async (client: Client, src = ".") => {
 
   const result = await ctr.stdout();
 
-  console.log(result);
+  return result;
 };
 
-export const apply = async (client: Client, src = ".") => {
+export const apply = async (
+  src = ".",
+  googleApplicationCredentials?: string
+) => {
   const context = client.host().directory(src);
   const TF_VERSION = Deno.env.get("TF_VERSION") || "latest";
+
+  if (googleApplicationCredentials) {
+    envs.GOOGLE_APPLICATION_CREDENTIALS = googleApplicationCredentials;
+  }
 
   const baseCtr = withEnvs(
     client
@@ -115,8 +138,6 @@ export const apply = async (client: Client, src = ".") => {
 
   const result = await ctr.stdout();
 
-  console.log(result);
-
   await client
     .pipeline("clear_plan")
     .container()
@@ -124,20 +145,18 @@ export const apply = async (client: Client, src = ".") => {
     .withMountedCache("/app/plan", client.cacheVolume("tfplan"))
     .withExec(["sh", "-c", "rm -rf /app/plan/*"])
     .stdout();
+
+  return result;
 };
 
-export type JobExec = (
-  client: Client,
-  src?: string
-) =>
-  | Promise<void>
+export type JobExec = (src?: string) =>
+  | Promise<string>
   | ((
-      client: Client,
       src?: string,
       options?: {
         ignore: string[];
       }
-    ) => Promise<void>);
+    ) => Promise<string>);
 
 export const runnableJobs: Record<Job, JobExec> = {
   [Job.init]: init,
