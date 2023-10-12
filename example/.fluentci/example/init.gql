@@ -1,5 +1,0 @@
-{
-  terraform {
-    init(src: ".", tfVersion: "1.5.7")
-  }
-}

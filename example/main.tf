@@ -4,12 +4,19 @@ provider "google" {
   region      = "us-east1"
 }
 
-resource "google_storage_bucket" "my-bucket" {
-  name          = "my-bucket"
+resource "google_storage_bucket" "my-fluentci-example-bucket" {
+  name          = "my-fluentci-example-bucket"
   location      = "US"
   force_destroy = true
 }
 
 output "bucketName" {
-  value = google_storage_bucket.my-bucket.url
+  value = google_storage_bucket.my-fluentci-example-bucket.url
+}
+
+terraform {
+  backend "gcs" {
+    bucket = "fluentci-example-tf-state"
+    prefix = "state/terraform.tfstate"
+  }
 }

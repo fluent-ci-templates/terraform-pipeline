@@ -1,9 +1,0 @@
-{
-  terraform {
-    plan(
-      src: "."
-      tfVersion: "1.5.7"
-      googleApplicationCredentials: "fluentci-086b644d4c53.json"
-    )
-  }
-}

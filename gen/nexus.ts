@@ -67,6 +67,7 @@ export interface NexusGenArgTypes {
       tfVersion?: string | null; // String
     }
     init: { // args
+      googleApplicationCredentials?: string | null; // String
       src: string; // String!
       tfVersion?: string | null; // String
     }

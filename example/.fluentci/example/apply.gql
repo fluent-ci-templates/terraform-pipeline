@@ -1,5 +1,0 @@
-{
-  terraform {
-    apply(src: ".", googleApplicationCredentials: "fluentci-086b644d4c53.json")
-  }
-}

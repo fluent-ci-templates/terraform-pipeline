@@ -16,9 +16,17 @@ const envs = filterObjectByPrefix(Deno.env.toObject(), [
   "GOOGLE_",
 ]);
 
-export const init = async (src = ".", tfVersion?: string) => {
+export const init = async (
+  src = ".",
+  tfVersion?: string,
+  googleApplicationCredentials?: string
+) => {
   const context = client.host().directory(src);
   const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
+
+  if (googleApplicationCredentials) {
+    envs.GOOGLE_APPLICATION_CREDENTIALS = googleApplicationCredentials;
+  }
 
   const baseCtr = withEnvs(
     client

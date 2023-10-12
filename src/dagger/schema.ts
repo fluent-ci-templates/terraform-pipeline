@@ -16,9 +16,10 @@ const Query = queryType({
       args: {
         src: nonNull(stringArg()),
         tfVersion: stringArg(),
+        googleApplicationCredentials: stringArg(),
       },
       resolve: async (_root, args, _ctx) =>
-        await init(args.src, args.tfVersion),
+        await init(args.src, args.tfVersion, args.googleApplicationCredentials),
     });
     t.string("validate", {
       args: {
