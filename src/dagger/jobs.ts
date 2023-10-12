@@ -40,6 +40,7 @@ export const init = async (
     .withMountedCache("/app/.terraform", client.cacheVolume("terraform"))
     .withDirectory("/app", context, { exclude })
     .withWorkdir("/app")
+    .withExec(["ls", "-ltr"], { skipEntrypoint: true })
     .withExec(["version"])
     .withExec(["init"]);
 
@@ -66,6 +67,7 @@ export const validate = async (src = ".", tfVersion?: string) => {
       exclude,
     })
     .withWorkdir("/app")
+    .withExec(["ls", "-ltr"], { skipEntrypoint: true })
     .withExec(["version"])
     .withExec(["validate"]);
 

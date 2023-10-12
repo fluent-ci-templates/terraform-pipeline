@@ -37,11 +37,13 @@ export const init = async (
   );
 
   const ctr = baseCtr
-    .withMountedCache("/app/.terraform", client.cacheVolume("terraform"))
     .withDirectory("/app", context, { exclude })
     .withWorkdir("/app")
+    .withMountedCache("/app/.terraform", client.cacheVolume("terraform"))
+    .withExec(["ls", "-ltra", ".", ".terraform"], { skipEntrypoint: true })
     .withExec(["version"])
-    .withExec(["init"]);
+    .withExec(["init"])
+    .withExec(["ls", "-ltra", ".", ".terraform"], { skipEntrypoint: true });
 
   await ctr.stdout();
 
@@ -61,11 +63,12 @@ export const validate = async (src = ".", tfVersion?: string) => {
   );
 
   const ctr = baseCtr
-    .withMountedCache("/app/.terraform", client.cacheVolume("terraform"))
     .withDirectory("/app", context, {
       exclude,
     })
+    .withMountedCache("/app/.terraform", client.cacheVolume("terraform"))
     .withWorkdir("/app")
+    .withExec(["ls", "-ltra", ".", ".terraform"], { skipEntrypoint: true })
     .withExec(["version"])
     .withExec(["validate"]);
 
