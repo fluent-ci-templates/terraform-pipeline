@@ -16,18 +16,9 @@ const envs = filterObjectByPrefix(Deno.env.toObject(), [
   "GOOGLE_",
 ]);
 
-export const init = async (
-  src = ".",
-  googleApplicationCredentials?: string
-) => {
+export const init = async (src = ".", tfVersion?: string) => {
   const context = client.host().directory(src);
-  const TF_VERSION = Deno.env.get("TF_VERSION") || "latest";
-  if (googleApplicationCredentials) {
-    Deno.env.set(
-      "GOOGLE_APPLICATION_CREDENTIALS",
-      googleApplicationCredentials
-    );
-  }
+  const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
   const baseCtr = withEnvs(
     client
@@ -44,14 +35,14 @@ export const init = async (
     .withExec(["version"])
     .withExec(["init"]);
 
-  const result = await ctr.stdout();
+  await ctr.stdout();
 
-  return result;
+  return "Initialized";
 };
 
-export const validate = async (src = ".") => {
+export const validate = async (src = ".", tfVersion?: string) => {
   const context = client.host().directory(src);
-  const TF_VERSION = Deno.env.get("TF_VERSION") || "latest";
+  const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
   const baseCtr = withEnvs(
     client
@@ -70,17 +61,18 @@ export const validate = async (src = ".") => {
     .withExec(["version"])
     .withExec(["validate"]);
 
-  const result = await ctr.stdout();
+  await ctr.stdout();
 
-  return result;
+  return "Configuration validated";
 };
 
 export const plan = async (
   src = ".",
+  tfVersion?: string,
   googleApplicationCredentials?: string
 ) => {
   const context = client.host().directory(src);
-  const TF_VERSION = Deno.env.get("TF_VERSION") || "latest";
+  const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
   if (googleApplicationCredentials) {
     envs.GOOGLE_APPLICATION_CREDENTIALS = googleApplicationCredentials;
@@ -104,17 +96,17 @@ export const plan = async (
     .withExec(["version"])
     .withExec(["plan", "-out=/app/plan/plan.tfplan"]);
 
-  const result = await ctr.stdout();
-
-  return result;
+  await ctr.stdout();
+  return "Plan generated";
 };
 
 export const apply = async (
   src = ".",
+  tfVersion?: string,
   googleApplicationCredentials?: string
 ) => {
   const context = client.host().directory(src);
-  const TF_VERSION = Deno.env.get("TF_VERSION") || "latest";
+  const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
   if (googleApplicationCredentials) {
     envs.GOOGLE_APPLICATION_CREDENTIALS = googleApplicationCredentials;
@@ -136,7 +128,7 @@ export const apply = async (
     .withExec(["version"])
     .withExec(["apply", "-auto-approve", "/app/plan/plan.tfplan"]);
 
-  const result = await ctr.stdout();
+  await ctr.stdout();
 
   await client
     .pipeline("clear_plan")
@@ -146,17 +138,14 @@ export const apply = async (
     .withExec(["sh", "-c", "rm -rf /app/plan/*"])
     .stdout();
 
-  return result;
+  return "Changes applied";
 };
 
-export type JobExec = (src?: string) =>
-  | Promise<string>
-  | ((
-      src?: string,
-      options?: {
-        ignore: string[];
-      }
-    ) => Promise<string>);
+export type JobExec = (
+  src?: string,
+  tfVersion?: string,
+  googleApplicationCredentials?: string
+) => Promise<string>;
 
 export const runnableJobs: Record<Job, JobExec> = {
   [Job.init]: init,
