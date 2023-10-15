@@ -23,7 +23,6 @@ jobs:
       - name: Run Dagger Pipelines
         run: |
           dagger query --doc init.gql
-          echo "=> Waiting for the service to be ready..."
-          sleep 5
           dagger query --doc validate.gql
+          dagger query --doc plan.gql
         working-directory: example
