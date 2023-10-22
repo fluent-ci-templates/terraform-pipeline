@@ -27,7 +27,7 @@ jobs:
       - name: Run Dagger Pipelines
         run: |
           rm ../deno.lock
-          dagger run deno run -A ../src/dagger/runner.ts init validate plan apply
+          dagger run deno run -A ../src/dagger/runner.ts init validate plan
         working-directory: example
         env:
           GOOGLE_APPLICATION_CREDENTIALS: fluentci-086b644d4c53.json
