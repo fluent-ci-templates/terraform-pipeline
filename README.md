@@ -1,7 +1,7 @@
 # Terraform Pipeline
 
 [![fluentci pipeline](https://img.shields.io/badge/dynamic/json?label=pkg.fluentci.io&labelColor=%23000&color=%23460cf1&url=https%3A%2F%2Fapi.fluentci.io%2Fv1%2Fpipeline%2Fterraform_pipeline&query=%24.version)](https://pkg.fluentci.io/terraform_pipeline)
-![deno compatibility](https://shield.deno.dev/deno/^1.34)
+![deno compatibility](https://shield.deno.dev/deno/^1.37)
 [![](https://img.shields.io/codecov/c/gh/fluent-ci-templates/terraform-pipeline)](https://codecov.io/gh/fluent-ci-templates/terraform-pipeline)
 
 A ready-to-use CI/CD Pipeline for managing your infrastructure with [Terraform](https://www.terraform.io/).
@@ -60,22 +60,38 @@ fluentci run .
 | plan      | Generate and show an execution plan    |
 | apply     | Builds or changes infrastructure       |
 
+```graphql
+apply(
+  googleApplicationCredentials: String, 
+  src: String!, 
+  tfVersion: String
+): String
+
+init(
+  googleApplicationCredentials: String, 
+  src: String!, 
+  tfVersion: String
+): String
+
+plan(
+  googleApplicationCredentials: String, 
+  src: String!, 
+  tfVersion: String
+): String
+
+validate(src: String!, tfVersion: String): String
+```
+
 ## Programmatic usage
 
 You can also use this pipeline programmatically:
 
 ```ts
-import Client, { connect } from "https://sdk.fluentci.io/v0.1.9/mod.ts";
-import { init, validate, plan, apply } from "https://pkg.fluentci.io/terraform_pipeline@v0.3.2/mod.ts";
+import { init, validate, plan, apply } from "https://pkg.fluentci.io/terraform_pipeline@v0.4.0/mod.ts";
 
-function pipeline(src = ".") {
-  connect(async (client: Client) => {
-    await init(client, src);
-    await validate(client, src);
-    await plan(client, src);
-    // await apply(client, src);
-  });
-}
+await init();
+await validate();
+await plan();
+// await apply();
 
-pipeline();
 ```

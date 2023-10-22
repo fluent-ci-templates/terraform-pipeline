@@ -1,0 +1,5 @@
+{
+  "root": "",
+  "name": "terraform",
+  "sdkRuntime": "tsiry/dagger-sdk-deno"
+}
