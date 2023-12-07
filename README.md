@@ -69,6 +69,28 @@ dagger mod install github.com/fluent-ci-templates/terraform-pipeline@mod
 | apply     | Builds or changes infrastructure       |
 
 ```typescript
+init(
+  src: Directory | string | undefined = ".",
+  tfVersion?: string,
+  googleApplicationCredentials?: string
+): Promise<string> 
+
+validate(
+  src: Directory | string = ".",
+  tfVersion?: string
+): Promise<string>
+
+plan(
+  src: Directory | string = ".",
+  tfVersion?: string,
+  googleApplicationCredentials?: string
+): Promise<string>
+
+apply(
+  src: Directory | string = ".",
+  tfVersion?: string,
+  googleApplicationCredentials?: string
+): Promise<string>
 ```
 
 ## Programmatic usage
