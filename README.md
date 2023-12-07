@@ -28,6 +28,14 @@ Now you can run the pipeline with:
 fluentci run .
 ```
 
+## Dagger Module
+
+Use as a [Dagger](https://dagger.io) module:
+
+```bash
+dagger mod install github.com/fluent-ci-templates/terraform-pipeline@mod
+```
+
 ## Environment variables
 
 | Variable                    | Description                                        |
@@ -60,26 +68,7 @@ fluentci run .
 | plan      | Generate and show an execution plan    |
 | apply     | Builds or changes infrastructure       |
 
-```graphql
-apply(
-  googleApplicationCredentials: String, 
-  src: String!, 
-  tfVersion: String
-): String
-
-init(
-  googleApplicationCredentials: String, 
-  src: String!, 
-  tfVersion: String
-): String
-
-plan(
-  googleApplicationCredentials: String, 
-  src: String!, 
-  tfVersion: String
-): String
-
-validate(src: String!, tfVersion: String): String
+```typescript
 ```
 
 ## Programmatic usage
@@ -87,7 +76,7 @@ validate(src: String!, tfVersion: String): String
 You can also use this pipeline programmatically:
 
 ```ts
-import { init, validate, plan, apply } from "https://pkg.fluentci.io/terraform_pipeline@v0.5.0/mod.ts";
+import { init, validate, plan, apply } from "https://pkg.fluentci.io/terraform_pipeline@v0.6.0/mod.ts";
 
 await init();
 await validate();

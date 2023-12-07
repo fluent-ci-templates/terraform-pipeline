@@ -1,5 +1,7 @@
-import { connect, CacheSharingMode } from "../../deps.ts";
-import { filterObjectByPrefix, withEnvs } from "./lib.ts";
+import { Directory } from "../../deps.ts";
+import { connect } from "../../sdk/connect.ts";
+import { CacheSharingMode, Client } from "../../sdk/client.gen.ts";
+import { filterObjectByPrefix, withEnvs, getDirectory } from "./lib.ts";
 
 export enum Job {
   init = "init",
@@ -16,13 +18,22 @@ const envs = filterObjectByPrefix(Deno.env.toObject(), [
   "GOOGLE_",
 ]);
 
-export const init = async (
-  src = ".",
+/**
+ * @function
+ * @description Initialize a Terraform working directory
+ * @param {string | Directory} src
+ * @param {string} tfVersion
+ * @param {string} googleApplicationCredentials
+ * @returns {Promise<string>}
+ */
+export async function init(
+  src: Directory | string | undefined = ".",
   tfVersion?: string,
   googleApplicationCredentials?: string
-) => {
-  await connect(async (client) => {
-    const context = client.host().directory(src);
+): Promise<string> {
+  let stdout = "";
+  await connect(async (client: Client) => {
+    const context = getDirectory(client, src);
     const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
     if (googleApplicationCredentials) {
@@ -49,16 +60,25 @@ export const init = async (
         skipEntrypoint: true,
       });
 
-    await ctr.stdout();
-
-    await ctr;
+    stdout = await ctr.stdout();
   });
-  return "Initialized";
-};
+  return stdout;
+}
 
-export const validate = async (src = ".", tfVersion?: string) => {
-  await connect(async (client) => {
-    const context = client.host().directory(src);
+/**
+ * @function
+ * @description Validate the configuration files in a directory
+ * @param {string | Directory} src
+ * @param {string} tfVersion
+ * @returns {Promise<string>}
+ */
+export async function validate(
+  src: Directory | string = ".",
+  tfVersion?: string
+): Promise<string> {
+  let stdout = "";
+  await connect(async (client: Client) => {
+    const context = getDirectory(client, src);
     const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
     const baseCtr = withEnvs(
@@ -100,19 +120,28 @@ export const validate = async (src = ".", tfVersion?: string) => {
       .withExec(["version"])
       .withExec(["validate"]);
 
-    await ctr.stdout();
+    stdout = await ctr.stdout();
   });
 
-  return "Configuration validated";
-};
+  return stdout;
+}
 
-export const plan = async (
-  src = ".",
+/**
+ * @function
+ * @description Generate and show an execution plan
+ * @param {string | Directory} src
+ * @param {string} tfVersion
+ * @param {string} googleApplicationCredentials
+ * @returns {Promise<string>}
+ */
+export async function plan(
+  src: Directory | string = ".",
   tfVersion?: string,
   googleApplicationCredentials?: string
-) => {
-  await connect(async (client) => {
-    const context = client.host().directory(src);
+): Promise<string> {
+  let stdout = "";
+  await connect(async (client: Client) => {
+    const context = getDirectory(client, src);
     const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
     if (googleApplicationCredentials) {
@@ -159,18 +188,27 @@ export const plan = async (
       .withExec(["version"])
       .withExec(["plan", "-out=/app/plan/plan.tfplan"]);
 
-    await ctr.stdout();
+    stdout = await ctr.stdout();
   });
-  return "Plan generated";
-};
+  return stdout;
+}
 
-export const apply = async (
-  src = ".",
+/**
+ * @function
+ * @description Builds or changes infrastructure
+ * @param {string | Directory} src
+ * @param {string} tfVersion
+ * @param {string} googleApplicationCredentials
+ * @returns {Promise<string>}
+ */
+export async function apply(
+  src: Directory | string = ".",
   tfVersion?: string,
   googleApplicationCredentials?: string
-) => {
-  await connect(async (client) => {
-    const context = client.host().directory(src);
+): Promise<string> {
+  let stdout = "";
+  await connect(async (client: Client) => {
+    const context = getDirectory(client, src);
     const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
     if (googleApplicationCredentials) {
@@ -217,7 +255,7 @@ export const apply = async (
       .withExec(["version"])
       .withExec(["apply", "-auto-approve", "/app/plan/plan.tfplan"]);
 
-    await ctr.stdout();
+    stdout = await ctr.stdout();
 
     await client
       .pipeline("clear_plan")
@@ -228,11 +266,11 @@ export const apply = async (
       .stdout();
   });
 
-  return "Changes applied";
-};
+  return stdout;
+}
 
 export type JobExec = (
-  src?: string,
+  src?: Directory | string,
   tfVersion?: string,
   googleApplicationCredentials?: string
 ) => Promise<string>;
