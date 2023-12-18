@@ -98,7 +98,7 @@ apply(
 You can also use this pipeline programmatically:
 
 ```ts
-import { init, validate, plan, apply } from "https://pkg.fluentci.io/terraform_pipeline@v0.6.0/mod.ts";
+import { init, validate, plan, apply } from "https://pkg.fluentci.io/terraform_pipeline@v0.6.1/mod.ts";
 
 await init();
 await validate();
