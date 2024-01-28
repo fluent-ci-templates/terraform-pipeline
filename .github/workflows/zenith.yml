@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Setup Dagger Zenith
         run: |
-          curl -L https://dl.dagger.io/dagger/install.sh | DAGGER_VERSION=0.9.3 sh
+          curl -L https://dl.dagger.io/dagger/install.sh | DAGGER_VERSION=0.9.7 sh
           sudo mv bin/dagger /usr/local/bin
           dagger version
       - name: Setup Service Account
@@ -22,7 +22,7 @@ jobs:
           GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Run Dagger Pipelines
         run: |
-          dagger query --doc init.gql
-          dagger query --doc validate.gql
-          dagger query --doc plan.gql
+          dagger call init --src . --tf-version 1.5.7 --google-application-credentials ./fluentci-086b644d4c53.json
+          dagger call validate --src . --tf-version 1.5.7
+          dagger call plan --src . --tf-version 1.5.7 --google-application-credentials ./fluentci-086b644d4c53.json
         working-directory: example
