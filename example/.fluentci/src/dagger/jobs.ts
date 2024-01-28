@@ -1,6 +1,5 @@
-import { Directory } from "../../deps.ts";
-import { connect } from "../../sdk/connect.ts";
-import { CacheSharingMode, Client } from "../../sdk/client.gen.ts";
+import { Directory, dag } from "../../deps.ts";
+import { CacheSharingMode } from "../../sdk/client.gen.ts";
 import { filterObjectByPrefix, withEnvs, getDirectory } from "./lib.ts";
 
 export enum Job {
@@ -31,37 +30,34 @@ export async function init(
   tfVersion?: string,
   googleApplicationCredentials?: string
 ): Promise<string> {
-  let stdout = "";
-  await connect(async (client: Client) => {
-    const context = getDirectory(client, src);
-    const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
+  const context = await getDirectory(dag, src);
+  const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
-    if (googleApplicationCredentials) {
-      envs.GOOGLE_APPLICATION_CREDENTIALS = googleApplicationCredentials;
-    }
+  if (googleApplicationCredentials) {
+    envs.GOOGLE_APPLICATION_CREDENTIALS = googleApplicationCredentials;
+  }
 
-    const baseCtr = withEnvs(
-      client
-        .pipeline(Job.init)
-        .container()
-        .from(`hashicorp/terraform:${TF_VERSION}`),
-      envs
-    );
+  const baseCtr = withEnvs(
+    dag
+      .pipeline(Job.init)
+      .container()
+      .from(`hashicorp/terraform:${TF_VERSION}`),
+    envs
+  );
 
-    const ctr = baseCtr
-      .withMountedCache("/app/.terraform", client.cacheVolume("terraform"), {
-        sharing: CacheSharingMode.Shared,
-      })
-      .withDirectory("/app", context, { exclude })
-      .withWorkdir("/app")
-      .withExec(["version"])
-      .withExec(["init"])
-      .withExec(["cp", ".terraform.lock.hcl", "/app/.terraform"], {
-        skipEntrypoint: true,
-      });
+  const ctr = baseCtr
+    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform"), {
+      sharing: CacheSharingMode.Shared,
+    })
+    .withDirectory("/app", context, { exclude })
+    .withWorkdir("/app")
+    .withExec(["version"])
+    .withExec(["init"])
+    .withExec(["cp", ".terraform.lock.hcl", "/app/.terraform"], {
+      skipEntrypoint: true,
+    });
 
-    stdout = await ctr.stdout();
-  });
+  const stdout = await ctr.stdout();
   return stdout;
 }
 
@@ -76,53 +72,49 @@ export async function validate(
   src: Directory | string = ".",
   tfVersion?: string
 ): Promise<string> {
-  let stdout = "";
-  await connect(async (client: Client) => {
-    const context = getDirectory(client, src);
-    const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
+  const context = await getDirectory(dag, src);
+  const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
-    const baseCtr = withEnvs(
-      client
-        .pipeline(Job.validate)
-        .container()
-        .from(`hashicorp/terraform:${TF_VERSION}`),
-      envs
-    );
+  const baseCtr = withEnvs(
+    dag
+      .pipeline(Job.validate)
+      .container()
+      .from(`hashicorp/terraform:${TF_VERSION}`),
+    envs
+  );
 
-    const ctr = baseCtr
-      .withDirectory("/app", context, {
-        exclude,
-      })
-      .withMountedCache("/app/.terraform", client.cacheVolume("terraform"), {
-        sharing: CacheSharingMode.Shared,
-      })
-      .withWorkdir("/app")
-      .withExec(
-        [
-          "sh",
-          "-c",
-          "[ ! -f .terraform/.terraform.lock.hcl ] && terraform init || true",
-        ],
-        {
-          skipEntrypoint: true,
-        }
-      )
-      .withExec(
-        [
-          "sh",
-          "-c",
-          "[ -f .terraform/.terraform.lock.hcl ] && cp .terraform/.terraform.lock.hcl .",
-        ],
-        {
-          skipEntrypoint: true,
-        }
-      )
-      .withExec(["version"])
-      .withExec(["validate"]);
+  const ctr = baseCtr
+    .withDirectory("/app", context, {
+      exclude,
+    })
+    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform"), {
+      sharing: CacheSharingMode.Shared,
+    })
+    .withWorkdir("/app")
+    .withExec(
+      [
+        "sh",
+        "-c",
+        "[ ! -f .terraform/.terraform.lock.hcl ] && terraform init || true",
+      ],
+      {
+        skipEntrypoint: true,
+      }
+    )
+    .withExec(
+      [
+        "sh",
+        "-c",
+        "[ -f .terraform/.terraform.lock.hcl ] && cp .terraform/.terraform.lock.hcl .",
+      ],
+      {
+        skipEntrypoint: true,
+      }
+    )
+    .withExec(["version"])
+    .withExec(["validate"]);
 
-    stdout = await ctr.stdout();
-  });
-
+  const stdout = await ctr.stdout();
   return stdout;
 }
 
@@ -139,57 +131,54 @@ export async function plan(
   tfVersion?: string,
   googleApplicationCredentials?: string
 ): Promise<string> {
-  let stdout = "";
-  await connect(async (client: Client) => {
-    const context = getDirectory(client, src);
-    const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
+  const context = await getDirectory(dag, src);
+  const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
-    if (googleApplicationCredentials) {
-      envs.GOOGLE_APPLICATION_CREDENTIALS = googleApplicationCredentials;
-    }
+  if (googleApplicationCredentials) {
+    envs.GOOGLE_APPLICATION_CREDENTIALS = googleApplicationCredentials;
+  }
 
-    const baseCtr = withEnvs(
-      client
-        .pipeline(Job.plan)
-        .container()
-        .from(`hashicorp/terraform:${TF_VERSION}`),
-      envs
-    );
+  const baseCtr = withEnvs(
+    dag
+      .pipeline(Job.plan)
+      .container()
+      .from(`hashicorp/terraform:${TF_VERSION}`),
+    envs
+  );
 
-    const ctr = baseCtr
-      .withMountedCache("/app/.terraform", client.cacheVolume("terraform"), {
-        sharing: CacheSharingMode.Shared,
-      })
-      .withMountedCache("/app/plan", client.cacheVolume("tfplan"))
-      .withDirectory("/app", context, {
-        exclude,
-      })
-      .withWorkdir("/app")
-      .withExec(
-        [
-          "sh",
-          "-c",
-          "[ ! -f .terraform/.terraform.lock.hcl ] && terraform init || true",
-        ],
-        {
-          skipEntrypoint: true,
-        }
-      )
-      .withExec(
-        [
-          "sh",
-          "-c",
-          "[ -f .terraform/.terraform.lock.hcl ] && cp .terraform/.terraform.lock.hcl .",
-        ],
-        {
-          skipEntrypoint: true,
-        }
-      )
-      .withExec(["version"])
-      .withExec(["plan", "-out=/app/plan/plan.tfplan"]);
+  const ctr = baseCtr
+    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform"), {
+      sharing: CacheSharingMode.Shared,
+    })
+    .withMountedCache("/app/plan", dag.cacheVolume("tfplan"))
+    .withDirectory("/app", context, {
+      exclude,
+    })
+    .withWorkdir("/app")
+    .withExec(
+      [
+        "sh",
+        "-c",
+        "[ ! -f .terraform/.terraform.lock.hcl ] && terraform init || true",
+      ],
+      {
+        skipEntrypoint: true,
+      }
+    )
+    .withExec(
+      [
+        "sh",
+        "-c",
+        "[ -f .terraform/.terraform.lock.hcl ] && cp .terraform/.terraform.lock.hcl .",
+      ],
+      {
+        skipEntrypoint: true,
+      }
+    )
+    .withExec(["version"])
+    .withExec(["plan", "-out=/app/plan/plan.tfplan"]);
 
-    stdout = await ctr.stdout();
-  });
+  const stdout = await ctr.stdout();
   return stdout;
 }
 
@@ -206,65 +195,62 @@ export async function apply(
   tfVersion?: string,
   googleApplicationCredentials?: string
 ): Promise<string> {
-  let stdout = "";
-  await connect(async (client: Client) => {
-    const context = getDirectory(client, src);
-    const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
+  const context = await getDirectory(dag, src);
+  const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
-    if (googleApplicationCredentials) {
-      envs.GOOGLE_APPLICATION_CREDENTIALS = googleApplicationCredentials;
-    }
+  if (googleApplicationCredentials) {
+    envs.GOOGLE_APPLICATION_CREDENTIALS = googleApplicationCredentials;
+  }
 
-    const baseCtr = withEnvs(
-      client
-        .pipeline(Job.apply)
-        .container()
-        .from(`hashicorp/terraform:${TF_VERSION}`),
-      envs
-    );
-
-    const ctr = baseCtr
-      .withMountedCache("/app/.terraform", client.cacheVolume("terraform"), {
-        sharing: CacheSharingMode.Shared,
-      })
-      .withMountedCache("/app/plan", client.cacheVolume("tfplan"), {
-        sharing: CacheSharingMode.Shared,
-      })
-      .withDirectory("/app", context, { exclude })
-      .withWorkdir("/app")
-      .withExec(
-        [
-          "sh",
-          "-c",
-          "[ ! -f .terraform/.terraform.lock.hcl ] && terraform init || true",
-        ],
-        {
-          skipEntrypoint: true,
-        }
-      )
-      .withExec(
-        [
-          "sh",
-          "-c",
-          "[ -f .terraform/.terraform.lock.hcl ] && cp .terraform/.terraform.lock.hcl .",
-        ],
-        {
-          skipEntrypoint: true,
-        }
-      )
-      .withExec(["version"])
-      .withExec(["apply", "-auto-approve", "/app/plan/plan.tfplan"]);
-
-    stdout = await ctr.stdout();
-
-    await client
-      .pipeline("clear_plan")
+  const baseCtr = withEnvs(
+    dag
+      .pipeline(Job.apply)
       .container()
-      .from("alpine")
-      .withMountedCache("/app/plan", client.cacheVolume("tfplan"))
-      .withExec(["sh", "-c", "rm -rf /app/plan/*"])
-      .stdout();
-  });
+      .from(`hashicorp/terraform:${TF_VERSION}`),
+    envs
+  );
+
+  const ctr = baseCtr
+    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform"), {
+      sharing: CacheSharingMode.Shared,
+    })
+    .withMountedCache("/app/plan", dag.cacheVolume("tfplan"), {
+      sharing: CacheSharingMode.Shared,
+    })
+    .withDirectory("/app", context, { exclude })
+    .withWorkdir("/app")
+    .withExec(
+      [
+        "sh",
+        "-c",
+        "[ ! -f .terraform/.terraform.lock.hcl ] && terraform init || true",
+      ],
+      {
+        skipEntrypoint: true,
+      }
+    )
+    .withExec(
+      [
+        "sh",
+        "-c",
+        "[ -f .terraform/.terraform.lock.hcl ] && cp .terraform/.terraform.lock.hcl .",
+      ],
+      {
+        skipEntrypoint: true,
+      }
+    )
+    .withExec(["version"])
+    .withExec(["apply", "-auto-approve", "/app/plan/plan.tfplan"]);
+
+  const stdout = await ctr.stdout();
+
+  await dag
+    .pipeline("clear_plan")
+    .container()
+    .from("alpine")
+    .withMountedCache("/app/plan", dag.cacheVolume("tfplan"))
+    .withExec(["sh", "-c", "rm -rf /app/plan/*"])
+    .stdout();
 
   return stdout;
 }
