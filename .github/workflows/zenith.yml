@@ -22,9 +22,9 @@ jobs:
           GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Run Dagger Pipelines
         run: |
-          dagger call init --src . --tf-version 1.5.7 --google-application-credentials ./fluentci-086b644d4c53.json
-          dagger call validate --src . --tf-version 1.5.7
-          dagger call plan --src . --tf-version 1.5.7 --google-application-credentials ./fluentci-086b644d4c53.json
+          dagger call init --src . --tf-version 1.7.3 --google-application-credentials ./fluentci-086b644d4c53.json
+          dagger call validate --src . --tf-version 1.7.3
+          dagger call plan --src . --tf-version 1.7.3 --google-application-credentials ./fluentci-086b644d4c53.json
         working-directory: example
         env:
           DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
