@@ -26,3 +26,5 @@ jobs:
           dagger call validate --src . --tf-version 1.5.7
           dagger call plan --src . --tf-version 1.5.7 --google-application-credentials ./fluentci-086b644d4c53.json
         working-directory: example
+        env:
+          DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
