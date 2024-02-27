@@ -33,7 +33,22 @@ fluentci run .
 Use as a [Dagger](https://dagger.io) module:
 
 ```bash
-dagger mod install github.com/fluent-ci-templates/terraform-pipeline@mod
+dagger install github.com/fluent-ci-templates/terraform-pipeline@main
+```
+
+Call functions from the module:
+
+```bash
+dagger call init --src . \
+  --google-application-credentials /path/to/credentials.json
+
+dagger call validate --src .
+
+dagger call plan --src . \
+  --google-application-credentials /path/to/credentials.json
+
+dagger call apply --src . \
+  --google-application-credentials /path/to/credentials.json
 ```
 
 ## Environment variables
@@ -98,7 +113,7 @@ apply(
 You can also use this pipeline programmatically:
 
 ```ts
-import { init, validate, plan, apply } from "https://pkg.fluentci.io/terraform_pipeline@v0.6.3/mod.ts";
+import { init, validate, plan, apply } from "https://pkg.fluentci.io/terraform_pipeline@v0.6.4/mod.ts";
 
 await init();
 await validate();
