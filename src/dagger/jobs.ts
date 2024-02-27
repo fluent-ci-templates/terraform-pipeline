@@ -1,3 +1,8 @@
+/**
+ * @module terraform
+ * @description Module for running Terraform commands
+ */
+
 import { Directory, dag } from "../../deps.ts";
 import { CacheSharingMode } from "../../sdk/client.gen.ts";
 import { filterObjectByPrefix, withEnvs, getDirectory } from "./lib.ts";
