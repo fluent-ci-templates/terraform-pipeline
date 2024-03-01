@@ -15,7 +15,7 @@ jobs:
       - name: Run Dagger Pipelines
         run: |
           fluentci run deno_pipeline
-          dagger -m github.com/fluent-ci-templates/terraform@main functions
+          dagger -m github.com/fluent-ci-templates/terraform-pipeline@main functions
       - name: Upload to Codecov
         run: fluentci run codecov_pipeline
         env:
