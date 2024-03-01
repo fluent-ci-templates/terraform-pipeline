@@ -51,7 +51,7 @@ export async function init(
   );
 
   const ctr = baseCtr
-    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform"), {
+    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform-example"), {
       sharing: CacheSharingMode.Shared,
     })
     .withDirectory("/app", context, { exclude })
@@ -92,7 +92,7 @@ export async function validate(
     .withDirectory("/app", context, {
       exclude,
     })
-    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform"), {
+    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform-example"), {
       sharing: CacheSharingMode.Shared,
     })
     .withWorkdir("/app")
@@ -152,10 +152,10 @@ export async function plan(
   );
 
   const ctr = baseCtr
-    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform"), {
+    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform-example"), {
       sharing: CacheSharingMode.Shared,
     })
-    .withMountedCache("/app/plan", dag.cacheVolume("tfplan"))
+    .withMountedCache("/app/plan", dag.cacheVolume("tfplan-example"))
     .withDirectory("/app", context, {
       exclude,
     })
@@ -216,10 +216,10 @@ export async function apply(
   );
 
   const ctr = baseCtr
-    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform"), {
+    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform-example"), {
       sharing: CacheSharingMode.Shared,
     })
-    .withMountedCache("/app/plan", dag.cacheVolume("tfplan"), {
+    .withMountedCache("/app/plan", dag.cacheVolume("tfplan-example"), {
       sharing: CacheSharingMode.Shared,
     })
     .withDirectory("/app", context, { exclude })
@@ -253,7 +253,7 @@ export async function apply(
     .pipeline("clear_plan")
     .container()
     .from("alpine")
-    .withMountedCache("/app/plan", dag.cacheVolume("tfplan"))
+    .withMountedCache("/app/plan", dag.cacheVolume("tfplan-example"))
     .withExec(["sh", "-c", "rm -rf /app/plan/*"])
     .stdout();
 
