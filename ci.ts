@@ -3,7 +3,7 @@ import {
   validate,
   plan,
   apply,
-} from "https://pkg.fluentci.io/terraform_pipeline@v0.6.4/mod.ts";
+} from "https://pkg.fluentci.io/terraform_pipeline@v0.6.5/mod.ts";
 
 await init();
 await validate();

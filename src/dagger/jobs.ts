@@ -35,7 +35,7 @@ export async function init(
   tfVersion?: string,
   googleApplicationCredentials?: string
 ): Promise<string> {
-  const context = await getDirectory(dag, src);
+  const context = await getDirectory(src);
   const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
   if (googleApplicationCredentials) {
@@ -77,7 +77,7 @@ export async function validate(
   src: Directory | string = ".",
   tfVersion?: string
 ): Promise<string> {
-  const context = await getDirectory(dag, src);
+  const context = await getDirectory(src);
   const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
   const baseCtr = withEnvs(
@@ -136,7 +136,7 @@ export async function plan(
   tfVersion?: string,
   googleApplicationCredentials?: string
 ): Promise<string> {
-  const context = await getDirectory(dag, src);
+  const context = await getDirectory(src);
   const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
   if (googleApplicationCredentials) {
@@ -200,7 +200,7 @@ export async function apply(
   tfVersion?: string,
   googleApplicationCredentials?: string
 ): Promise<string> {
-  const context = await getDirectory(dag, src);
+  const context = await getDirectory(src);
   const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
   if (googleApplicationCredentials) {
