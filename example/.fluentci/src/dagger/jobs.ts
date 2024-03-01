@@ -1,3 +1,8 @@
+/**
+ * @module terraform
+ * @description Module for running Terraform commands
+ */
+
 import { Directory, dag } from "../../deps.ts";
 import { CacheSharingMode } from "../../sdk/client.gen.ts";
 import { filterObjectByPrefix, withEnvs, getDirectory } from "./lib.ts";
@@ -30,7 +35,7 @@ export async function init(
   tfVersion?: string,
   googleApplicationCredentials?: string
 ): Promise<string> {
-  const context = await getDirectory(dag, src);
+  const context = await getDirectory(src);
   const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
   if (googleApplicationCredentials) {
@@ -46,7 +51,7 @@ export async function init(
   );
 
   const ctr = baseCtr
-    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform-example"), {
+    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform"), {
       sharing: CacheSharingMode.Shared,
     })
     .withDirectory("/app", context, { exclude })
@@ -72,7 +77,7 @@ export async function validate(
   src: Directory | string = ".",
   tfVersion?: string
 ): Promise<string> {
-  const context = await getDirectory(dag, src);
+  const context = await getDirectory(src);
   const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
   const baseCtr = withEnvs(
@@ -87,7 +92,7 @@ export async function validate(
     .withDirectory("/app", context, {
       exclude,
     })
-    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform-example"), {
+    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform"), {
       sharing: CacheSharingMode.Shared,
     })
     .withWorkdir("/app")
@@ -131,7 +136,7 @@ export async function plan(
   tfVersion?: string,
   googleApplicationCredentials?: string
 ): Promise<string> {
-  const context = await getDirectory(dag, src);
+  const context = await getDirectory(src);
   const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
   if (googleApplicationCredentials) {
@@ -147,7 +152,7 @@ export async function plan(
   );
 
   const ctr = baseCtr
-    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform-example"), {
+    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform"), {
       sharing: CacheSharingMode.Shared,
     })
     .withMountedCache("/app/plan", dag.cacheVolume("tfplan"))
@@ -195,7 +200,7 @@ export async function apply(
   tfVersion?: string,
   googleApplicationCredentials?: string
 ): Promise<string> {
-  const context = await getDirectory(dag, src);
+  const context = await getDirectory(src);
   const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
 
   if (googleApplicationCredentials) {
@@ -211,7 +216,7 @@ export async function apply(
   );
 
   const ctr = baseCtr
-    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform-example"), {
+    .withMountedCache("/app/.terraform", dag.cacheVolume("terraform"), {
       sharing: CacheSharingMode.Shared,
     })
     .withMountedCache("/app/plan", dag.cacheVolume("tfplan"), {
