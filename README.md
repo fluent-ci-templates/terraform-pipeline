@@ -3,6 +3,7 @@
 [![fluentci pipeline](https://img.shields.io/badge/dynamic/json?label=pkg.fluentci.io&labelColor=%23000&color=%23460cf1&url=https%3A%2F%2Fapi.fluentci.io%2Fv1%2Fpipeline%2Fterraform_pipeline&query=%24.version)](https://pkg.fluentci.io/terraform_pipeline)
 ![deno compatibility](https://shield.deno.dev/deno/^1.37)
 [![dagger-min-version](https://img.shields.io/badge/dagger-v0.10.0-blue?color=3D66FF&labelColor=000000)](https://dagger.io)
+[![](https://jsr.io/badges/@fluentci/terraform)](https://jsr.io/@fluentci/terraform)
 [![ci](https://github.com/fluent-ci-templates/terraform-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/fluent-ci-templates/terraform-pipeline/actions/workflows/ci.yml)
 
 A ready-to-use CI/CD Pipeline for managing your infrastructure with [Terraform](https://www.terraform.io/).
