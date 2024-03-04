@@ -1,5 +1,0 @@
-{
-  terraform {
-    validate(src: ".", tfVersion: "1.5.7")
-  }
-}

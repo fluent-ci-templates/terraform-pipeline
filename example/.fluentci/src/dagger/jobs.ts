@@ -3,7 +3,7 @@
  * @description Module for running Terraform commands
  */
 
-import { Directory, dag } from "../../deps.ts";
+import { Directory, dag, env } from "../../deps.ts";
 import { CacheSharingMode } from "../../sdk/client.gen.ts";
 import { filterObjectByPrefix, withEnvs, getDirectory } from "./lib.ts";
 
@@ -16,11 +16,7 @@ export enum Job {
 
 export const exclude = [".terraform", ".git", ".fluentci", "plan"];
 
-const envs = filterObjectByPrefix(Deno.env.toObject(), [
-  "TF_",
-  "AWS_",
-  "GOOGLE_",
-]);
+const envs = filterObjectByPrefix(env.toObject(), ["TF_", "AWS_", "GOOGLE_"]);
 
 /**
  * @function
@@ -36,7 +32,7 @@ export async function init(
   googleApplicationCredentials?: string
 ): Promise<string> {
   const context = await getDirectory(src);
-  const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
+  const TF_VERSION = tfVersion || env.get("TF_VERSION") || "latest";
 
   if (googleApplicationCredentials) {
     envs.GOOGLE_APPLICATION_CREDENTIALS = googleApplicationCredentials;
@@ -78,7 +74,7 @@ export async function validate(
   tfVersion?: string
 ): Promise<string> {
   const context = await getDirectory(src);
-  const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
+  const TF_VERSION = tfVersion || env.get("TF_VERSION") || "latest";
 
   const baseCtr = withEnvs(
     dag
@@ -137,7 +133,7 @@ export async function plan(
   googleApplicationCredentials?: string
 ): Promise<string> {
   const context = await getDirectory(src);
-  const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
+  const TF_VERSION = tfVersion || env.get("TF_VERSION") || "latest";
 
   if (googleApplicationCredentials) {
     envs.GOOGLE_APPLICATION_CREDENTIALS = googleApplicationCredentials;
@@ -155,7 +151,7 @@ export async function plan(
     .withMountedCache("/app/.terraform", dag.cacheVolume("terraform-example"), {
       sharing: CacheSharingMode.Shared,
     })
-    .withMountedCache("/app/plan", dag.cacheVolume("tfplan-example"))
+    .withMountedCache("/app/plan", dag.cacheVolume("tfplan"))
     .withDirectory("/app", context, {
       exclude,
     })
@@ -201,7 +197,7 @@ export async function apply(
   googleApplicationCredentials?: string
 ): Promise<string> {
   const context = await getDirectory(src);
-  const TF_VERSION = tfVersion || Deno.env.get("TF_VERSION") || "latest";
+  const TF_VERSION = tfVersion || env.get("TF_VERSION") || "latest";
 
   if (googleApplicationCredentials) {
     envs.GOOGLE_APPLICATION_CREDENTIALS = googleApplicationCredentials;
@@ -219,7 +215,7 @@ export async function apply(
     .withMountedCache("/app/.terraform", dag.cacheVolume("terraform-example"), {
       sharing: CacheSharingMode.Shared,
     })
-    .withMountedCache("/app/plan", dag.cacheVolume("tfplan-example"), {
+    .withMountedCache("/app/plan", dag.cacheVolume("tfplan"), {
       sharing: CacheSharingMode.Shared,
     })
     .withDirectory("/app", context, { exclude })
@@ -253,7 +249,7 @@ export async function apply(
     .pipeline("clear_plan")
     .container()
     .from("alpine")
-    .withMountedCache("/app/plan", dag.cacheVolume("tfplan-example"))
+    .withMountedCache("/app/plan", dag.cacheVolume("tfplan"))
     .withExec(["sh", "-c", "rm -rf /app/plan/*"])
     .stdout();
 

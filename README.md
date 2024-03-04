@@ -3,6 +3,7 @@
 [![fluentci pipeline](https://img.shields.io/badge/dynamic/json?label=pkg.fluentci.io&labelColor=%23000&color=%23460cf1&url=https%3A%2F%2Fapi.fluentci.io%2Fv1%2Fpipeline%2Fterraform_pipeline&query=%24.version)](https://pkg.fluentci.io/terraform_pipeline)
 ![deno compatibility](https://shield.deno.dev/deno/^1.37)
 [![dagger-min-version](https://img.shields.io/badge/dagger-v0.10.0-blue?color=3D66FF&labelColor=000000)](https://dagger.io)
+[![ci](https://github.com/fluent-ci-templates/terraform-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/fluent-ci-templates/terraform-pipeline/actions/workflows/ci.yml)
 
 A ready-to-use CI/CD Pipeline for managing your infrastructure with [Terraform](https://www.terraform.io/).
 
@@ -28,7 +29,7 @@ Now you can run the pipeline with:
 fluentci run .
 ```
 
-## Dagger Module
+## 🧩 Dagger Module
 
 Use as a [Dagger](https://dagger.io) module:
 
@@ -51,7 +52,7 @@ dagger call apply --src . \
   --google-application-credentials /path/to/credentials.json
 ```
 
-## Environment variables
+## 🛠️ Environment variables
 
 | Variable                    | Description                                        |
 | --------------------------- | -------------------------------------------------- |
@@ -74,7 +75,7 @@ dagger call apply --src . \
 | TF_PLUGIN_CACHE_DIR         | The Terraform plugin cache directory               |
 | TF_IGNORE                   | Display ignored files and directories               |
 
-## Jobs
+## ✨ Jobs
 
 | Job       | Description                            |
 | --------- | -------------------------------------- |
@@ -108,12 +109,12 @@ apply(
 ): Promise<string>
 ```
 
-## Programmatic usage
+## 👨‍💻 Programmatic usage
 
 You can also use this pipeline programmatically:
 
 ```ts
-import { init, validate, plan, apply } from "https://pkg.fluentci.io/terraform_pipeline@v0.6.5/mod.ts";
+import { init, validate, plan, apply } from "jsr:@fluentci/terraform";
 
 await init();
 await validate();

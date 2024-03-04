@@ -1,9 +1,4 @@
-import {
-  init,
-  validate,
-  plan,
-  apply,
-} from "https://pkg.fluentci.io/terraform_pipeline@v0.6.5/mod.ts";
+import { init, validate, plan, apply } from "jsr:@fluentci/terraform";
 
 await init();
 await validate();
