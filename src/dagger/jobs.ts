@@ -19,6 +19,8 @@ export const exclude = [".terraform", ".git", ".fluentci", "plan"];
 const envs = filterObjectByPrefix(env.toObject(), ["TF_", "AWS_", "GOOGLE_"]);
 
 /**
+ * Initialize a Terraform working directory
+ *
  * @function
  * @description Initialize a Terraform working directory
  * @param {string | Directory} src
@@ -63,6 +65,8 @@ export async function init(
 }
 
 /**
+ * Validate the configuration files in a directory
+ *
  * @function
  * @description Validate the configuration files in a directory
  * @param {string | Directory} src
@@ -120,6 +124,8 @@ export async function validate(
 }
 
 /**
+ * Generate and show an execution plan
+ *
  * @function
  * @description Generate and show an execution plan
  * @param {string | Directory} src
@@ -184,6 +190,8 @@ export async function plan(
 }
 
 /**
+ * Builds or changes infrastructure
+ *
  * @function
  * @description Builds or changes infrastructure
  * @param {string | Directory} src
